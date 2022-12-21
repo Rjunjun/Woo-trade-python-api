@@ -45,26 +45,38 @@ class Client():
         params = {
             "symbol": symbol,
             "type": interval,
-            "limit": 1000
+            "limit": 10
         }
         params = OrderedDict(sorted(params.items()))
         headers = self.get_header(params)
         return requests.get(url=url, params=params,  headers=headers).json()
     
+    def get_kline_hist(self, symbol, interval, start_time):
+        url = "https://api-pub.woo.org/v1/hist/kline"
+        params = {
+            "symbol": symbol,
+            "type": interval,
+            "start_time": start_time
+        }
+        params = OrderedDict(sorted(params.items()))
+        headers = self.get_header(params)
+        return requests.get(url=url, params=params,  headers=headers).json()
+
     def get_all_symble(self):
         url = self.base_api + "public/info/"
         params = OrderedDict(sorted({}.items()))
         headers = self.get_header(params)
         return requests.get(url=url, params=params,  headers=headers).json()
 
-    def send_order(self, symbol, order_type, order_price, order_quantity, side):
+    def send_order(self, symbol, order_type, order_price, order_quantity, side, reduce_only):
         url = self.base_api + "order/"
         params = {
             "symbol": symbol,
             "order_type": order_type,
             "order_price": order_price,
             "order_quantity": order_quantity,
-            "side": side
+            "side": side,
+            "reduce_only":reduce_only
         }
         params = OrderedDict(sorted(params.items()))
         headers = self.get_header(params)
@@ -92,3 +104,27 @@ class Client():
         params = OrderedDict(sorted(params.items()))
         headers = self.get_header(params)
         return requests.delete(url=url, params=params,  headers=headers).json()
+
+    def cancel_order(self, symbol, order_id):
+        url = self.base_api + "order/"
+        params = {
+            "symbol": symbol,
+            "order_id": order_id
+        }
+        params = OrderedDict(sorted(params.items()))
+        headers = self.get_header(params)
+        return requests.delete(url=url, params=params,  headers=headers).json()
+
+    def get_info(self, symbol):
+        url = self.base_api + "public/info/" + symbol
+        params = {}
+        params = OrderedDict(sorted(params.items()))
+        headers = self.get_header(params)
+        return requests.get(url=url, params=params,  headers=headers).json()
+
+    def get_orderbook(self, symbol):
+        url = self.base_api + "orderbook/" + symbol
+        params = {}
+        params = OrderedDict(sorted(params.items()))
+        headers = self.get_header(params)
+        return requests.get(url=url, params=params,  headers=headers).json()
